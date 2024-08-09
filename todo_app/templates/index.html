@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Científica</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Estilos del formulario de login */
+        #login-form,
+        #calculator,
+        #register-form {
+            display: none;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            display: none;
+        }
+
+        .link {
+            color: #007bff;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* Estilos de la calculadora */
+        #calculator {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .button-calc {
+            width: 23%;
+            margin: 1%;
+            padding: 15px 0;
+            font-size: 18px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .button-calc:hover {
+            background-color: #444;
+        }
+
+        .display {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 15px;
+            font-size: 24px;
+            text-align: right;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Calculadora Científica</h1>
+
+        <!-- Formulario de Registro -->
+        <div id="register-form">
+            <input type="text" id="register-username" class="input-field" placeholder="Usuario">
+            <input type="password" id="register-password" class="input-field" placeholder="Contraseña">
+            <input type="email" id="register-email" class="input-field" placeholder="Correo Electrónico">
+            <button class="button" onclick="register()">Registrarse</button>
+            <p class="error-message" id="register-error">Error en el registro</p>
+            <span class="link" onclick="toggleForms('login')">¿Ya tienes una cuenta? Inicia sesión</span>
+        </div>
+
+        <!-- Formulario de Login -->
+        <div id="login-form">
+            <input type="text" id="login-username" class="input-field" placeholder="Usuario">
+            <input type="password" id="login-password" class="input-field" placeholder="Contraseña">
+            <button class="button" onclick="login()">Iniciar Sesión</button>
+            <p class="error-message" id="login-error">Usuario o contraseña incorrectos</p>
+            <span class="link" onclick="toggleForms('register')">¿No tienes cuenta? Regístrate</span>
+        </div>
+
+        <!-- Calculadora -->
+        <div id="calculator">
+            <input type="text" id="display" class="display" disabled>
+            <button class="button-calc" onclick="appendToDisplay('7')">7</button>
+            <button class="button-calc" onclick="appendToDisplay('8')">8</button>
+            <button class="button-calc" onclick="appendToDisplay('9')">9</button>
+            <button class="button-calc" onclick="appendToDisplay('/')">/</button>
+
+            <button class="button-calc" onclick="appendToDisplay('4')">4</button>
+            <button class="button-calc" onclick="appendToDisplay('5')">5</button>
+            <button class="button-calc" onclick="appendToDisplay('6')">6</button>
+            <button class="button-calc" onclick="appendToDisplay('*')">*</button>
+
+            <button class="button-calc" onclick="appendToDisplay('1')">1</button>
+            <button class="button-calc" onclick="appendToDisplay('2')">2</button>
+            <button class="button-calc" onclick="appendToDisplay('3')">3</button>
+            <button class="button-calc" onclick="appendToDisplay('-')">-</button>
+
+            <button class="button-calc" onclick="appendToDisplay('0')">0</button>
+            <button class="button-calc" onclick="appendToDisplay('.')">.</button>
+            <button class="button-calc" onclick="calculate()">=</button>
+            <button class="button-calc" onclick="appendToDisplay('+')">+</button>
+
+            <button class="button-calc" onclick="appendToDisplay('Math.sin(')">sin</button>
+            <button class="button-calc" onclick="appendToDisplay('Math.cos(')">cos</button>
+            <button class="button-calc" onclick="appendToDisplay('Math.tan(')">tan</button>
+            <button class="button-calc" onclick="clearDisplay()">C</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleForms('login');
+        });
+
+        function toggleForms(form) {
+            document.getElementById('login-form').style.display = form === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = form === 'register' ? 'block' : 'none';
+            document.getElementById('calculator').style.display = form === 'calculator' ? 'block' : 'none';
+        }
+
+        function appendToDisplay(value) {
+            document.getElementById('display').value += value;
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+        }
+
+        function calculate() {
+            try {
+                const result = eval(document.getElementById('display').value);
+                document.getElementById('display').value = result;
+            } catch (error) {
+                document.getElementById('display').value = 'Error';
+            }
+        }
+
+        async function register() {
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const email = document.getElementById('register-email').value;
+
+            if (!username || !password || !email) {
+                document.getElementById('register-error').textContent = 'Todos los campos son obligatorios';
+                document.getElementById('register-error').style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, email })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    toggleForms('login');
+                } else {
+                    document.getElementById('register-error').textContent = data.message;
+                    document.getElementById('register-error').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('register-error').textContent = 'Error de conexión';
+                document.getElementById('register-error').style.display = 'block';
+            }
+        }
+
+        async function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                document.getElementById('login-error').textContent = 'Usuario y contraseña son obligatorios';
+                document.getElementById('login-error').style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    toggleForms('calculator');
+                } else {
+                    document.getElementById('login-error').textContent = data.message;
+                    document.getElementById('login-error').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('login-error').textContent = 'Error de conexión';
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+
+</html>
